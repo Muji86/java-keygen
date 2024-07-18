@@ -41,6 +41,10 @@ public class GenerateKey
         privateKey = getPrivateKey( privateKeyString );
         publicKey = getPublicKey( publicKeyString );
 
+        System.out.println(getPrivateKeyString());
+        System.out.println("\n\n");
+        System.out.println(getPublicKeyString());
+
         test();
     }
 
@@ -51,14 +55,6 @@ public class GenerateKey
     public String getPrivateKeyString() {
         return this.privateKeyString;
     }
-
-    public static void main( String[] args )
-        throws InvalidKeySpecException, NoSuchAlgorithmException
-    {
-        GenerateKey generateKey = new GenerateKey(SignatureAlgorithm.RS256);
-        generateKey.generate();
-    }
-
 
     private String getPublicKeyString(KeyPair keyPair) {
         byte[] encodedPublic = keyPair.getPublic().getEncoded();
@@ -91,21 +87,26 @@ public class GenerateKey
     private PrivateKey getPrivateKey( String key )
         throws InvalidKeySpecException, NoSuchAlgorithmException
     {
-        PrivateKey privateKey = null;
         PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec( Base64.getDecoder().decode( key.getBytes() ) );
         KeyFactory kf = KeyFactory.getInstance( "RSA" );
-        privateKey = kf.generatePrivate( spec );
 
-        return privateKey;
+        return kf.generatePrivate( spec );
     }
 
     private PublicKey getPublicKey( String key )
         throws NoSuchAlgorithmException, InvalidKeySpecException
     {
-        X509EncodedKeySpec X509publicKey = new X509EncodedKeySpec( Base64.getDecoder().decode( key ) );
+        X509EncodedKeySpec x509publicKey = new X509EncodedKeySpec( Base64.getDecoder().decode( key ) );
 
         KeyFactory kf = KeyFactory.getInstance( "RSA" );
 
-        return kf.generatePublic( X509publicKey );
+        return kf.generatePublic( x509publicKey );
+    }
+
+    public static void main( String[] args )
+            throws InvalidKeySpecException, NoSuchAlgorithmException
+    {
+        GenerateKey generateKey = new GenerateKey(SignatureAlgorithm.RS256);
+        generateKey.generate();
     }
 }
